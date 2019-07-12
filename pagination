@@ -1,0 +1,151 @@
+//
+//---------------------------CRIAR PAGINAÇÃO EM CARDS-------------------------------------
+//-------------------------------------------------------------------------------------------
+			//RECEBER O NUMERO DA PAGINA
+			$pagina_atual = filter_input(INPUT_GET,'pagina', FILTER_SANITIZE_NUMBER_INT);
+			$pagina = (!empty($pagina_atual)) ? $pagina_atual : 1;
+			global $pagina;
+			//SETAR A QUANTIDADE DE ITENS POR PÁGINA
+			$qnt_result_pg = 6;
+			//CALCULAR O INICIO VISUALIZAÇÃO
+			$inicio = ($qnt_result_pg * $pagina) - $qnt_result_pg;
+		//----------------------------------------------------------------------------------------
+    
+    $result = "SELECT * FROM tb_produto LIMIT $inicio, $qnt_result_pg";
+		//PEGAR OS DADOS DO BANCO ATRAVÉS DA QUERY E ATRIBUIR À VARIÁVEL
+		$result = mysqli_query($conn, $result);
+    
+//----------------------------------------------------------------------------------------
+
+if(mysqli_num_rows($result) > 0)
+	{
+		while($row = mysqli_fetch_array($result))
+		{
+			$idProd = $row['id_produto'];//VARIÁVEL ID PARA O BOTÃO EXCLUIR
+			?>
+					<div class="card col-12 col-sm-6 col-md-6 col-lg-4" style="width:150px;">
+						<div class="">
+							<!--BOTAO EXCLUIR EXIBE PARA A SEÇÃO ADMINISTRADOR-->
+							<?php 
+								if(isset($_SESSION['nomeUser']) && $_SESSION['tipoUser'] == 1){
+								?>
+
+							<form action='../validacao/validarProdutos_CRUD.php' method='post' class='float-right mr-5'>
+								<button type='submit' class='btn rounded-circle bg-transparent position-absolute' aria-label='EXCLUIR' name='btnExcluir' value='<?php echo"$idProd" ?>'><span class='fas fa-times-circle h3 text-danger' aria-hidden='true'></span></button>
+							</form>
+							<?php } ?>
+
+
+							<!--BOTAO EXCLUIR-->
+							<div class="text-center mt-2"><img class="card-img-top" style="width:230px; height:258px;" src="../img/site/<?php echo $row["image"];?>" alt="Card image cap"></div>
+							<div class="card-body">
+								<h5 class="card-title text-dark"><?php echo $row["p_name"];?></h5>
+								<p class="card-text text-dark"><?php echo $row["p_descricao"];?></p>
+								<div class="text-center">
+									<p class="h5 text-dark">R$ <?php echo $row["preco"];?></p>
+									<a href="#" class="btn btn-primary">COMPRAR</a>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<?php
+		}
+	}
+	?>
+
+				</div>
+
+				<?php
+									
+//PAGINAÇÃO SOMAR A QUANTIDADE DE ITENS CADASTRADOS
+//--------------------------------------------------------------------------------
+
+$result_pg = "SELECT COUNT(id_produto) AS num_result FROM tb_produto";
+	$resultado_pg = mysqli_query($conn, $result_pg);
+	$row_pg = mysqli_fetch_assoc($resultado_pg);
+  
+//QUANTIDADE DE PAGINAS
+	$quantidade_pg = ceil($row_pg['num_result'] / $qnt_result_pg);
+//LIMITAR OS LINKS ANTES E DEPOIS
+	$max_links = 2;
+
+	echo "<div class='col-12 text-center text-dark'><a class='badge badge-light' href='BolosAdmin.php?pagina=1'>PRIMEIRA</a> ";
+		
+	for($pag_ant = $pagina - $max_links; $pag_ant <= $pagina - 1; $pag_ant++){
+		
+		if($pag_ant >= 1){
+			echo "<a class='badge badge-light' href='BolosAdmin.php?pagina=$pag_ant'>$pag_ant </a>";
+	}
+	
+}
+	echo " $pagina ";
+	
+	for($pag_dep = $pagina + 1; $pag_dep <= $pagina + $max_links; $pag_dep++){
+		if($pag_dep <= $quantidade_pg){
+					echo "<a href='BolosAdmin.php?pagina=$pag_dep'> $pag_dep </a>";
+
+		}	
+}
+
+	echo "<a class='badge badge-light' href='BolosAdmin.php?pagina=$quantidade_pg'> ÚLTIMA</a></div>";
+//---------------------------------------------------------------------------------
+				
+				?>
+			</div>
+		</div>
+    
+//--------------------------------------------------------------------------------------------------------
+//-----------------------------------OUTRO EXEMPLO COM TABELAS--------------------------------------------
+//--------------------------------------------------------------------------------------------------------
+
+//CRIAR PAGINAÇÃO
+//----------------------------------------------------------------------------------------
+
+
+
+		//LISTAR CADA LINHA DA ARRAY DO BD COM WHILE 
+		echo	"<table class='table table-striped table-hover table-responsive-lg table-responsive-mg table-responsive-sm align-items-baseline'>" .
+			"<td class='bg-dark text-white font-weight-bold text-center'>Código" . "</td>" .
+			"<td class='bg-dark text-white font-weight-bold text-center'>Registrado" . "</td>" .
+			"<td class='bg-dark text-white font-weight-bold text-center'>Prazo" . "</td>" .
+			"<td class='bg-dark text-white font-weight-bold text-center'>Descrição" . "</td>" .
+			"<td class='bg-dark text-white font-weight-bold text-center'>Estado" . "</td>" .
+			"<td class='bg-dark text-white font-weight-bold text-center'>" . "</td>";
+				
+		while ($row_agenda = mysqli_fetch_assoc($result_agenda)){
+			
+			$id = $row_agenda['id'];//VARIÁVEL DEFINIR VALOR AO BOTÃO CONCLUIR
+			$estado = $row_agenda['estado'];
+			
+			echo "<tr scope='row' class='text-center'>" . "<td class='tamanho-tabela'>". $row_agenda['id'] ."</td>".
+				"<td>" . date('d/m/Y H:i', strtotime($row_agenda['dataAtual']))."</td>".
+		 		"<td>" . date('d/m/Y', strtotime($row_agenda['dataCad']))."</td>".
+		 		"<td>". $row_agenda['descricao'] ."</td>";
+			
+			$dataAtual = $row_agenda['dataAtual'];
+			$dataCad = $row_agenda['dataCad'];
+			
+			//ESCONDER O BOTAO QUANDO CONCLUIDO
+			if($row_agenda['estado'] == "CONCLUÍDO"){
+				echo "<td class='text-success font-weight-bold'>". $row_agenda['estado'] ."</td>".
+		 		"<td><form action='botaoExcluir.php' method='post'><button type='submit' class='btn bg-transparent' aria-label='Remover' name='btnExcluir' value='$id'><span class='glyphicon glyphicon-trash  h3 text-danger' aria-hidden='true'></span></button></form></td>"."</tr>";
+			}
+			else{
+				if($dataAtual < $dataCad){
+				echo "<td class='font-weight-bold'>". $row_agenda['estado'] ."</td>".
+		 		"<td class='row float-right'><form action='agendaEstado.php' method='post'><button type='submit' class='btn bg-transparent' type='submit' name='btnConcluir' value='$id' aria-label='Concluir'><span class='glyphicon glyphicon-ok-circle  h2 text-success' aria-hidden='true'></span></button></form><form action='botaoExcluir.php' method='post'><button type='submit' class='btn bg-transparent' aria-label='Remover' name='btnExcluir' value='$id'><span class='glyphicon glyphicon-trash  h3 text-danger' aria-hidden='true'></span></button></form></td>"."</tr>";
+			}
+			
+			
+				else{
+					echo "<td class='text-danger font-weight-bold'>". $row_agenda['estado'] ."</td>".
+		 			"<td><form action='agendaEstado.php' method='post'><button type='submit' class='btn bg-transparent' type='submit' name='btnConcluir' value='$id' aria-label='Concluir'><span class='glyphicon glyphicon-ok-circle  h2 text-success' aria-hidden='true'></span></button></form></td>"."</tr>";
+				}
+			}
+			
+		}
+		echo "</table>";
+		
+		
+		?>

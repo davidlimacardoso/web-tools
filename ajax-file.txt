@@ -1,20 +1,30 @@
-var formData = new FormData(this);
-            debugger;
-            $.ajax({
-                url: formURL,
-                type: 'POST',
-                data: formData,
-                mimeType: "multipart/form-data",
-                contentType: false,
-                cache: false,
-                processData: false,
-                success: function (data, textStatus, jqXHR) {
-                    debugger;
+function UploadFile(form) {
+    var formData = new FormData(form); 
 
+    $.ajax({
+         url: 'Produtos/upload',
+         type: 'POST',
+         data: formData,
+         async: false,
+         cache: false,
+         contentType: false,
+         enctype: 'multipart/form-data',
+         processData: false,
+         success: function (response) {
+             alert(response);
+         }
+         fail: function() {
+             alert("Servidor em baixo ou falha de rede");
+         }
+    });
+}
 
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
+$(".btn-comprar").click(function (e) {
 
+    e.preventDefault();
+    var forms = $("form");
 
-                }
-            });
+    for (var i = 0; i < forms.length; i++) {
+        UploadFile(forms[i]);
+    }
+});

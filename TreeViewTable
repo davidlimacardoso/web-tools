@@ -1,4 +1,5 @@
       http://ludo.cubicphuse.nl/jquery-treetable/css/jquery.treetable.css
+      http://ludo.cubicphuse.nl/jquery-treetable/jquery.treetable.js
       
       <table id="example-basic">
         <caption>Basic jQuery treetable Example</caption>

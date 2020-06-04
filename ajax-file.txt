@@ -1,132 +1,64 @@
-#mytable {
-    border-collapse: collapse;
-    font-family: "Lucida Sans Unicode","Lucida Grande",Sans-Serif;
-    font-size: 12px;
-    margin: 20px;
-    text-align: left;
-    width: 480px;
-}
-#mytable th {
-    background: none repeat scroll 0 0 #B9C9FE;
-    font-size: 13px;
-    font-weight: normal;
-    padding: 5px;
-}
-#mytable thead th.firstCol {
-    background: url("http://media.smashingmagazine.com/images/express-css-table-design/table-images/left.png") no-repeat scroll left -1px #B9C9FE;
-}
-#mytable thead th.LastCol {
-    background: url("http://media.smashingmagazine.com/images/express-css-table-design/table-images/right.png") no-repeat scroll right -1px #B9C9FE;
-}
-#mytable td {
-    background: none repeat scroll 0 0 #E8EDFF;
-    border-top: 1px solid #FFFFFF;
-    color: #666699;
-    padding: 1px;
-}
-table td {
-    /*border: 1px solid #000000;*/
-}
-.level1 td:first-child {
-    padding-left: 15px !important;
-}
-.level2 td:first-child {
-    padding-left: 30px !important;
-}
-.level3 td:first-child {
-    padding-left: 45px !important;
-}
-.collapse .toggle {
-    background: url("http://mleibman.github.com/SlickGrid/images/collapse.gif") no-repeat;
-    padding: 0 5px 0 0;
-}
-.expand .toggle {
-    background: url("http://mleibman.github.com/SlickGrid/images/expand.gif") no-repeat;
-    padding: 0 5px 0 0;
-}
-.toggle {
-    height: 9px;
-    width: 9px;
-    display: inline-block;   
-}
-//---------------------------------------------------------------------------------------
-
-
-<table id="mytable">
-    <thead>
-        <th class="firstCol">Titulo</th>
-        <th class="LastCol">Valor</th>
-    </thead>
-    <tr data-depth="0" class="collapse level0">
-        <td><span class="toggle collapse"></span>Item 1</td>
-        <td>123</td>
+<table id="itdev_gangs">
+    <tr class="gang-name">
+        <td colspan="2">The Blips</td>
     </tr>
-    <tr data-depth="1" class="collapse level1">
-        <td><span class="toggle"></span>Item 2</td>
-        <td>123</td>
+    <tr class="members blips">
+        <td>Rotton </td>
+        <td>Rob</td>
     </tr>
-    <tr data-depth="2" class="collapse level2">
-        <td><span class="toggle"></span>Item 3</td>
-        <td>123</td>
+    <tr class="members blips">
+        <td>Effram</td>
+        <td>The Dumb Rabbot</td>
     </tr>
-    <tr data-depth="3" class="collapse level3">
-        <td>Item x</td>
-        <td>Letra</td>
+    <tr class="gang-name">
+        <td colspan="2">The Crudz</td>
     </tr>
-    <tr data-depth="1" class="collapse level1">
-        <td><span class="toggle"></span>Item 4</td>
-        <td>123</td>
+    <tr class="members crudz">
+        <td>Jason</td>
+        <td>"Sky" Halker</td>
     </tr>
-    <tr data-depth="2" class="collapse level2">
-        <td>Item 4x</td>
-        <td>123</td>
+    <tr class="members crudz">
+        <td>Sparky</td>
+        <td>That stupid Eagle</td>
     </tr>
-    <tr data-depth="0" class="collapse collapsable level0">
-        <td><span class="toggle collapse"></span>Item 5</td>
-        <td>123</td>
+    <tr class="gang-name">
+        <td colspan="2">The Satin Flings</td>
     </tr>
-    <tr data-depth="1" class="collapse collapsable level1">
-        <td>Item 6</td>
-        <td>123</td>
+    <tr class="members satin-flings">
+        <td>Josh-man</td>
+        <td>McDanielson-man III</td>
+    </tr>
+    <tr class="members satin-flings">
+        <td>Dominque</td>
+        <td>The Christmas Donkey</td>
     </tr>
 </table>
-
-//---------------------------------------------------------------------------------------
-$(function() {
-    $('#mytable').on('click', '.toggle', function () {
-        //Gets all <tr>'s  of greater depth
-        //below element in the table
-        var findChildren = function (tr) {
-            var depth = tr.data('depth');
-            return tr.nextUntil($('tr').filter(function () {
-                return $(this).data('depth') <= depth;
-            }));
-        };
-
-        var el = $(this);
-        var tr = el.closest('tr'); //Get <tr> parent of toggle button
-        var children = findChildren(tr);
-
-        //Remove already collapsed nodes from children so that we don't
-        //make them visible. 
-        //(Confused? Remove this code and close Item 2, close Item 1 
-        //then open Item 1 again, then you will understand)
-        var subnodes = children.filter('.expand');
-        subnodes.each(function () {
-            var subnode = $(this);
-            var subnodeChildren = findChildren(subnode);
-            children = children.not(subnodeChildren);
+        
+        
+        
+        
+        
+        
+        
+        $('.gang-name').click(function(){
+    if($(this).hasClass("collapsed")){
+        $(this).nextUntil('tr.gang-name')
+        .find('td')
+        .parent()
+        .find('td > div')
+        .slideDown("fast", function(){
+            var $set = $(this);
+            $set.replaceWith($set.contents());
         });
-
-        //Change icon and hide/show children
-        if (tr.hasClass('collapse')) {
-            tr.removeClass('collapse').addClass('expand');
-            children.hide();
-        } else {
-            tr.removeClass('expand').addClass('collapse');
-            children.show();
-        }
-        return children;
-    });
-   $('.toggle').trigger('click');
+        $(this).removeClass("collapsed");
+    } else {
+        $(this).nextUntil('tr.gang-name')
+        .find('td')
+        .wrapInner('<div style="display: block;" />')
+        .parent()
+        .find('td > div')
+        .slideUp("fast");
+        $(this).addClass("collapsed");
+    }
 });
+

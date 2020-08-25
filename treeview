@@ -1,0 +1,11 @@
+jQuery("a[class^=show_]").click(function(event) {
+        let classImg = jQuery(event.target).attr('class');
+        let imgClose = '<img class="close" src="../../img/close.gif"/>';
+        let ImgOpen = '<img class="open" src="../../img/open.gif"/>';
+        
+        let imgTag = classImg == 'close' ? ImgOpen : imgClose; 
+
+        jQuery(this).html(imgTag);
+        jQuery(".extra_" + jQuery(this).attr('class').substr(5)).slideToggle(0);
+        event.preventDefault();
+})
